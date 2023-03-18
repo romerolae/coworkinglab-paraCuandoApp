@@ -13,23 +13,23 @@ module.exports = {
     try {
       const adminUser = await usersService.findUserByEmailOr404('pineres@academlo.com')
       const adminUser2 = await usersService.findUserByEmailOr404(
-				'romero@academlo.com'
-			);
+        'romero@academlo.com'
+      );
       const adminRole = await rolesService.findRoleByName('admin')
       const profiles = [
-				{
-					user_id: adminUser.id,
-					role_id: adminRole.id,
-					created_at: new Date(),
-					updated_at: new Date(),
-				},
-				{
-					user_id: adminUser2.id,
-					role_id: adminRole.id,
-					created_at: new Date(),
-					updated_at: new Date(),
-				},
-			];
+        {
+          user_id: adminUser.id,
+          role_id: adminRole.id,
+          created_at: new Date(),
+          updated_at: new Date(),
+        },
+        {
+          user_id: adminUser2.id,
+          role_id: adminRole.id,
+          created_at: new Date(),
+          updated_at: new Date(),
+        },
+      ];
       
       await queryInterface.bulkInsert('profiles', profiles , {transaction})
       await transaction.commit()
@@ -45,8 +45,8 @@ module.exports = {
     try {
       const adminUser = await usersService.findUserByEmailOr404('pineres@academlo.com')
       const adminUser2 = await usersService.findUserByEmailOr404(
-				'romero@academlo.com'
-			);
+        'romero@academlo.com'
+      );
       const adminRole = await rolesService.findRoleByName('admin')
       
       await queryInterface.bulkDelete('profiles', {
