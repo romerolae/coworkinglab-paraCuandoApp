@@ -1,0 +1,241 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "API",
+    "version": "1.0.0"
+  },
+  "tags": [
+    {
+      "name": "auth",
+      "description": "Auth endpoints"
+    }
+  ],
+  "paths": {
+    "/api/v1/auth/login": {
+      "post": {
+        "tags": ["auth"],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "email": {
+                  "type": "string",
+                  "example": "example@email.com"
+                },
+                "password": {
+                  "type": "string",
+                  "example": "password"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The user will send the email and password to receive a token with which requests based on their ID will be made",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "message": {
+                  "type": "string",
+                  "example": "Correct credentials!"
+                },
+                "token": {
+                  "type": "string",
+                  "example": "token"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auth/sign-up": {
+      "post": {
+        "tags": ["auth"],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "first_name": {
+                  "type": "string",
+                  "example": "Manolo"
+                },
+                "last_name": {
+                  "type": "string",
+                  "example": "Perez"
+                },
+                "email": {
+                  "type": "string",
+                  "example": "example@email.com"
+                },
+                "password": {
+                  "type": "string",
+                  "example": "password"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "User registers, automatically creates an asociation of Profiles with public rol",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "results": {
+                  "type": "string",
+                  "example": "Success Sign Up"
+                },
+                "errors": {
+                  "type": "array",
+                  "example": [
+                    {
+                      "errorName": "",
+                      "message": ""
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auth/forget-password": {
+      "post": {
+        "tags": ["auth"],
+        "parameters": [
+          {
+            "name": "email",
+            "in": "body",
+            "description": "Email of user to update",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "email": {
+                  "type": "string",
+                  "example": "example@email.com"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User sets a token on the DB so that they can change their password",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "message": {
+                  "type": "string",
+                  "example": "Email sended!, check your inbox"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Error sending the recovery email"
+          }
+        }
+      }
+    },
+    "/api/v1/auth/change-password/{token}": {
+      "post": {
+        "tags": ["auth"],
+        "parameters": [
+          {
+            "name": "token",
+            "in": "path",
+            "type": "string",
+            "required": true
+          },
+          {
+            "name": "password",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "password": {
+                  "type": "string",
+                  "example": "password"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A token is sent with the password to change it",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "message": {
+                  "type": "string",
+                  "example": "Success Update"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Something went wrong deserializing the token"
+          }
+        }
+      }
+    },
+    "/api/v1/auth/me": {
+      "get": {
+        "tags": ["auth"],
+        "parameters": [
+          {
+            "name": "token",
+            "in": "header",
+            "description": "bearer token",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The user with token will get all profiles asociated with their account",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "results": {
+                  "type": "object",
+                  "example": {
+                    "id": "740273ca-b792-4129-a050-2fc01957d94d",
+                    "first_name": "Manolo",
+                    "last_name": "Perez",
+                    "email": "example@email.com",
+                    "username": "example@email.com",
+                    "image_url": null,
+                    "profiles": [
+                      {
+                        "id": "6",
+                        "user_id": "740273ca-b792-4129-a050-2fc01957d94d",
+                        "role_id": 1,
+                        "created_at": "2023-02-09T23:32:03.233Z",
+                        "updated_at": "2023-02-09T23:32:03.233Z"
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
