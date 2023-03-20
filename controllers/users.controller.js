@@ -23,8 +23,8 @@ const getUsers = async (req, res, next) =>{
 
 const getUserById = async (req, res, next) =>{
   try{
-    let id = req.params
-    let user = await usersService.getAuthUserOr404(id)
+    let {id} = req.params
+    let user = await usersService.getUser(id)
     return res.json({results: user})
   }catch(error){
     next(error)
@@ -41,11 +41,11 @@ const addUser = async (req, res, next) =>{
   }
 }
 
-const updateUser = async (req, res, next) =>{
+const putUser = async (req, res, next) =>{
   try{
     let { id } = req.params
-    let { name } = req.body
-    let user = await usersService.updateUser(id, {name})
+    let { body } = req
+    let user = await usersService.updateUser(id, body)
     return res.json({results: user})
   }catch(error){
     next(error)
@@ -57,5 +57,5 @@ module.exports = {
   getUsers,
   getUserById,
   addUser,
-  updateUser
+  putUser
 }

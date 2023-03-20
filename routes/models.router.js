@@ -1,7 +1,7 @@
 const express = require('express')
-const usersRouter = require('./users.router')
+const routesUser = require('./users.routes')
 
-const isAuthenticatedByPassportJwt = require('../libs/passport')
+//const isAuthenticatedByPassportJwt = require('../libs/passport')
 
 const routesAuth = require('./auth.routes')
 
@@ -10,7 +10,7 @@ function routerModels(app) {
 
   app.use('/api/v1', router)
   router.use('/auth', routesAuth)
-  router.use('/users', usersRouter)
+  router.use('/users', routesUser)
 
 }
 module.exports = routerModels
