@@ -9,27 +9,27 @@ module.exports = {
     const transaction = await queryInterface.sequelize.transaction()
 
     const usersSeeds = [
-			{
-				id: uuid.v4(),
-				first_name: 'Jorge',
-				last_name: 'Pineres',
-				email: 'pineres@academlo.com',
-				username: 'pineres@academlo.com',
-				password: hashPassword('12345678910'),
-				created_at: new Date(),
-				updated_at: new Date(),
-			},
-			{
-				id: uuid.v4(),
-				first_name: 'Luis',
-				last_name: 'romero',
-				email: 'romero@academlo.com',
-				username: 'romero@academlo.com',
-				password: hashPassword('12345678910'),
-				created_at: new Date(),
-				updated_at: new Date(),
-			},
-		];
+      {
+        id: uuid.v4(),
+        first_name: 'Jorge',
+        last_name: 'Pineres',
+        email: 'pineres@academlo.com',
+        username: 'pineres@academlo.com',
+        password: hashPassword('12345678910'),
+        created_at: new Date(),
+        updated_at: new Date(),
+      },
+      {
+        id: uuid.v4(),
+        first_name: 'Luis',
+        last_name: 'romero',
+        email: 'romero@academlo.com',
+        username: 'romero@academlo.com',
+        password: hashPassword('12345678910'),
+        created_at: new Date(),
+        updated_at: new Date(),
+      },
+    ];
 
     try {
       await queryInterface.bulkInsert('users', usersSeeds, { transaction })
