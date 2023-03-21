@@ -30,8 +30,16 @@ const getUsers = async (req, res, next) => {
 const getUserById = async (req, res, next) => {
   try {
     let { id } = req.params
-    let user = await usersService.getUser(id)
-    return res.json({ results: user })
+    let userId = req.user.id
+    let userProfile = await profilesService.findProfileByUserID(userId)
+    const sameOrAdmin = 1
+    if (userId === id || userProfile.role_id === 2) {
+      let user = await usersService.getUser(id, sameOrAdmin)
+      return res.json({ results: user })
+    } else {
+      let user = await usersService.getUser(id)
+      return res.json({ results: user })
+    }
   } catch (error) {
     next(error)
   }
