@@ -11,6 +11,5 @@ function routerModels(app) {
   app.use('/api/v1', router)
   router.use('/auth', routesAuth)
   router.use('/users', routesUser)
-
 }
 module.exports = routerModels
