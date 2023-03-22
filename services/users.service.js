@@ -103,7 +103,17 @@ class UsersService {
     try {
       let user = await models.Users.findByPk(id)
       if (!user) throw new CustomError('Not found user', 404, 'Not Found')
-      let updatedUser = await user.update(obj, { transaction })
+      let updatedUser = await user.update(obj, {
+        transaction,
+        fields: [
+          'first_name',
+          'last_name',
+          'country_id',
+          'code_phone',
+          'phone',
+          'interests'
+        ],
+      });
       await transaction.commit()
       return updatedUser
     } catch (error) {
