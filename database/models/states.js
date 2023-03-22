@@ -1,16 +1,15 @@
 'use strict'
 const { Model } = require('sequelize')
 module.exports = (sequelize, DataTypes) => {
-  class Countries extends Model {
+  class States extends Model {
     static associate(models) {
-      Countries.hasMany(models.Users, { as: 'users', foreignKey: 'country_id' })
-      Countries.hasMany(models.States, {
-        as: 'states',
+      States.belongsTo(models.Countries, {
+        as: 'country',
         foreignKey: 'country_id',
       })
     }
   }
-  Countries.init(
+  States.init(
     {
       id: {
         type: DataTypes.INTEGER,
@@ -22,8 +21,8 @@ module.exports = (sequelize, DataTypes) => {
     },
     {
       sequelize,
-      modelName: 'Countries',
-      tableName: 'countries',
+      modelName: 'States',
+      tableName: 'states',
       underscored: true,
       timestamps: true,
       scopes: {
@@ -36,5 +35,5 @@ module.exports = (sequelize, DataTypes) => {
       },
     }
   )
-  return Countries
+  return States
 }

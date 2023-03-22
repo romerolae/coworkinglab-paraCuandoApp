@@ -1,34 +1,36 @@
 'use strict'
 const { Model } = require('sequelize')
 module.exports = (sequelize, DataTypes) => {
-  class Countries extends Model {
+  class PublicationsTypes extends Model {
     static associate(models) {
-      Countries.hasMany(models.Users, { as: 'users', foreignKey: 'country_id' })
-      Countries.hasMany(models.States, {
-        as: 'states',
-        foreignKey: 'country_id',
-      })
+      //Countries.hasMany(models.Users, { as: 'users', foreignKey: 'country_id' })
     }
   }
-  Countries.init(
+  PublicationsTypes.init(
     {
       id: {
         type: DataTypes.INTEGER,
         primaryKey: true,
+        allowNull: false,
       },
       name: {
         type: DataTypes.STRING,
+        allowNull: false,
+      },
+      description: {
+        type: DataTypes.STRING,
+        allowNull: false,
       },
     },
     {
       sequelize,
-      modelName: 'Countries',
-      tableName: 'countries',
+      modelName: 'PublicationsTypes',
+      tableName: 'publications_types',
       underscored: true,
       timestamps: true,
       scopes: {
         view_public: {
-          attributes: ['id', 'name'],
+          attributes: ['id', 'name', 'description'],
         },
         no_timestamps: {
           attributes: { exclude: ['created_at', 'updated_at'] },
@@ -36,5 +38,5 @@ module.exports = (sequelize, DataTypes) => {
       },
     }
   )
-  return Countries
+  return PublicationsTypes
 }
