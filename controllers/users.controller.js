@@ -6,34 +6,28 @@ const usersService = new UsersService()
 const profilesService = new ProfilesService()
 
 const getUsers = async (req, res, next) => {
-  let userId = req.user.id
-  let userProfile = await profilesService.findProfileByUserID(userId)
-  if (userProfile.role_id === 2) {
-    try {
-      let query = req.query
-      let { page, size } = query
+  try {
+    let query = req.query
+    let { page, size } = query
 
-      const { limit, offset } = getPagination(page, size, '10')
-      query.limit = limit
-      query.offset = offset
-      let users = await usersService.findAndCount(query)
-      const results = getPagingData(users, page, limit)
-      return res.status(200).json({ results: results })
-    } catch (error) {
-      next(error)
-    }
-  } else {
-    return res.status(401).json({ message: 'Unauthorized' })
+    const { limit, offset } = getPagination(page, size, '10')
+    query.limit = limit
+    query.offset = offset
+    let users = await usersService.findAndCount(query)
+    const results = getPagingData(users, page, limit)
+    return res.status(200).json({ results: results })
+  } catch (error) {
+    next(error)
   }
 }
 
 const getUserById = async (req, res, next) => {
   try {
-    let { id } = req.params
-    let userId = req.user.id
-    let userProfile = await profilesService.findProfileByUserID(userId)
+    const id = req.params.id
+    const isSameUser = req.isSameUser
+    const userRole = req.userRole
     const sameOrAdmin = 1
-    if (userId === id || userProfile.role_id === 2) {
+    if (isSameUser || userRole === 2) {
       let user = await usersService.getUser(id, sameOrAdmin)
       return res.json({ results: user })
     } else {
@@ -49,9 +43,10 @@ const putUser = async (req, res, next) => {
   try {
     const { id } = req.params
     const { body } = req
+    const isSameUser = req.isSameUser
 
     // Verify if the user trying to edit is the same as the user being edited
-    if (req.user.id !== id) {
+    if (!isSameUser) {
       return res.status(401).json({ error: 'Unauthorized' })
     } else {
       let user = await usersService.updateUser(id, body)
