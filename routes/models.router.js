@@ -5,6 +5,7 @@ const routesCountries = require('./countries.routes')
 const routesStates = require('./states.routes')
 const routesCities = require('./cities.routes')
 const routesRoles = require('./roles.routes')
+const routesTags = require('./tags.routes')
 
 //const isAuthenticatedByPassportJwt = require('../libs/passport')
 
@@ -21,5 +22,6 @@ function routerModels(app) {
   router.use('/states', routesStates)
   router.use('/cities', routesCities)
   router.use('/roles', routesRoles)
+  router.use('/tags', routesTags)
 }
 module.exports = routerModels
