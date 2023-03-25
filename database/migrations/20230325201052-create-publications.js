@@ -1,17 +1,18 @@
-//migration de Profiles creada por sequelize-cli y editada por nosotros
 'use strict'
+
+/** @type {import('sequelize-cli').Migration} */
 module.exports = {
-  up: async (queryInterface, Sequelize) => {
+  async up(queryInterface, Sequelize) {
     const transaction = await queryInterface.sequelize.transaction()
     try {
       await queryInterface.createTable(
-        'profiles',
+        'publications',
         {
           id: {
             allowNull: false,
-            autoIncrement: true,
+            defaultValue: Sequelize.UUIDV4,
             primaryKey: true,
-            type: Sequelize.BIGINT,
+            type: Sequelize.UUID,
           },
           user_id: {
             type: Sequelize.UUID,
@@ -24,16 +25,43 @@ module.exports = {
             onUpdate: 'CASCADE',
             onDelete: 'RESTRICT',
           },
-          role_id: {
+          publication_type_id: {
             type: Sequelize.INTEGER,
             allowNull: false,
             foreignKey: true,
             references: {
-              model: 'roles',
+              model: 'publications_types',
               key: 'id',
             },
             onUpdate: 'CASCADE',
             onDelete: 'RESTRICT',
+          },
+          city_id: {
+            type: Sequelize.INTEGER,
+            allowNull: false,
+            foreignKey: true,
+            references: {
+              model: 'cities',
+              key: 'id',
+            },
+            onUpdate: 'CASCADE',
+            onDelete: 'RESTRICT',
+          },
+          title: {
+            type: Sequelize.STRING,
+            allowNull: false,
+          },
+          description: {
+            type: Sequelize.STRING,
+            allowNull: false,
+          },
+          content: {
+            type: Sequelize.TEXT,
+            allowNull: false,
+          },
+          reference_link: {
+            type: Sequelize.TEXT,
+            allowNull: false,
           },
           created_at: {
             allowNull: false,
@@ -47,23 +75,17 @@ module.exports = {
         { transaction }
       )
 
-      await queryInterface.addConstraint('profiles', {
-        fields: ['user_id', 'role_id'],
-        type: 'unique',
-        name: 'profiles_user_id_role_id_key',
-        transaction,
-      })
-
       await transaction.commit()
     } catch (error) {
       await transaction.rollback()
       throw error
     }
   },
-  down: async (queryInterface /*Sequelize*/) => {
+
+  async down(queryInterface, Sequelize) {
     const transaction = await queryInterface.sequelize.transaction()
     try {
-      await queryInterface.dropTable('profiles', { transaction })
+      await queryInterface.dropTable('publications', { transaction })
       await transaction.commit()
     } catch (error) {
       await transaction.rollback()

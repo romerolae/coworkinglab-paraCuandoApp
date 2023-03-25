@@ -1,39 +1,36 @@
-//migration de Profiles creada por sequelize-cli y editada por nosotros
 'use strict'
 module.exports = {
   up: async (queryInterface, Sequelize) => {
     const transaction = await queryInterface.sequelize.transaction()
     try {
       await queryInterface.createTable(
-        'profiles',
+        'publications_images',
         {
-          id: {
-            allowNull: false,
-            autoIncrement: true,
-            primaryKey: true,
-            type: Sequelize.BIGINT,
-          },
-          user_id: {
+          publication_id: {
             type: Sequelize.UUID,
             allowNull: false,
             foreignKey: true,
+            primaryKey: true,
             references: {
-              model: 'users',
+              model: 'publications',
               key: 'id',
             },
             onUpdate: 'CASCADE',
             onDelete: 'RESTRICT',
           },
-          role_id: {
+          image_url: {
+            type: Sequelize.TEXT,
+            allowNull: false,
+            primaryKey: true,
+          },
+          order: {
             type: Sequelize.INTEGER,
             allowNull: false,
-            foreignKey: true,
-            references: {
-              model: 'roles',
-              key: 'id',
+            autoIncrement: true,
+            validate: {
+              min: 1,
+              max: 3,
             },
-            onUpdate: 'CASCADE',
-            onDelete: 'RESTRICT',
           },
           created_at: {
             allowNull: false,
@@ -47,13 +44,6 @@ module.exports = {
         { transaction }
       )
 
-      await queryInterface.addConstraint('profiles', {
-        fields: ['user_id', 'role_id'],
-        type: 'unique',
-        name: 'profiles_user_id_role_id_key',
-        transaction,
-      })
-
       await transaction.commit()
     } catch (error) {
       await transaction.rollback()
@@ -63,7 +53,7 @@ module.exports = {
   down: async (queryInterface /*Sequelize*/) => {
     const transaction = await queryInterface.sequelize.transaction()
     try {
-      await queryInterface.dropTable('profiles', { transaction })
+      await queryInterface.dropTable('publications_images', { transaction })
       await transaction.commit()
     } catch (error) {
       await transaction.rollback()

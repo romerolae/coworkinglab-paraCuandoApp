@@ -1,35 +1,32 @@
-//migration de Profiles creada por sequelize-cli y editada por nosotros
 'use strict'
+
+/** @type {import('sequelize-cli').Migration} */
 module.exports = {
-  up: async (queryInterface, Sequelize) => {
+  async up(queryInterface, Sequelize) {
     const transaction = await queryInterface.sequelize.transaction()
     try {
       await queryInterface.createTable(
-        'profiles',
+        'users_tags',
         {
-          id: {
+          tag_id: {
+            type: Sequelize.INTEGER,
             allowNull: false,
-            autoIncrement: true,
             primaryKey: true,
-            type: Sequelize.BIGINT,
-          },
-          user_id: {
-            type: Sequelize.UUID,
-            allowNull: false,
             foreignKey: true,
             references: {
-              model: 'users',
+              model: 'tags',
               key: 'id',
             },
             onUpdate: 'CASCADE',
             onDelete: 'RESTRICT',
           },
-          role_id: {
-            type: Sequelize.INTEGER,
+          user_id: {
+            type: Sequelize.UUID,
             allowNull: false,
+            primaryKey: true,
             foreignKey: true,
             references: {
-              model: 'roles',
+              model: 'users',
               key: 'id',
             },
             onUpdate: 'CASCADE',
@@ -46,24 +43,17 @@ module.exports = {
         },
         { transaction }
       )
-
-      await queryInterface.addConstraint('profiles', {
-        fields: ['user_id', 'role_id'],
-        type: 'unique',
-        name: 'profiles_user_id_role_id_key',
-        transaction,
-      })
-
       await transaction.commit()
     } catch (error) {
       await transaction.rollback()
       throw error
     }
   },
-  down: async (queryInterface /*Sequelize*/) => {
+
+  async down(queryInterface, Sequelize) {
     const transaction = await queryInterface.sequelize.transaction()
     try {
-      await queryInterface.dropTable('profiles', { transaction })
+      await queryInterface.dropTable('users_tags', { transaction })
       await transaction.commit()
     } catch (error) {
       await transaction.rollback()
