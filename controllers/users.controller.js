@@ -1,9 +1,7 @@
 const UsersService = require('../services/users.service')
-const ProfilesService = require('../services/profiles.service')
 const { getPagination, getPagingData } = require('../utils/helpers')
 
 const usersService = new UsersService()
-const profilesService = new ProfilesService()
 
 const getUsers = async (req, res, next) => {
   try {

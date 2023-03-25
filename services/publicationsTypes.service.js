@@ -54,7 +54,11 @@ class PublicationsTypesService {
   async updatePublicationTypeById(id, obj) {
     const transaction = await models.sequelize.transaction()
     try {
-      await models.PublicationsTypes.update(obj, { where: { id } })
+      await models.PublicationsTypes.update(
+        obj,
+        { where: { id } },
+        { transaction, fields: ['name', 'description'] }
+      )
       await transaction.commit()
     } catch (error) {
       await transaction.rollback()
