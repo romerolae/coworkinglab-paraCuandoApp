@@ -3,6 +3,8 @@ const routesUser = require('./users.routes')
 const routesPublicationsTypes = require('./publicationsTypes.routes')
 const routesCountries = require('./countries.routes')
 const routesStates = require('./states.routes')
+const routesCities = require('./cities.routes')
+const routesRoles = require('./roles.routes')
 
 //const isAuthenticatedByPassportJwt = require('../libs/passport')
 
@@ -17,5 +19,7 @@ function routerModels(app) {
   router.use('/publications-types', routesPublicationsTypes)
   router.use('/countries', routesCountries)
   router.use('/states', routesStates)
+  router.use('/cities', routesCities)
+  router.use('/roles', routesRoles)
 }
 module.exports = routerModels
