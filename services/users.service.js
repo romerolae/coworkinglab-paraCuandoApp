@@ -23,9 +23,29 @@ class UsersService {
       options.where.id = id
     }
 
-    const { name } = query
-    if (name) {
-      options.where.name = { [Op.iLike]: `%${name}%` }
+    // const { name } = query
+    // if (name) {
+    //   options.where.name = { [Op.iLike]: `%${name}%` }
+    // }
+
+    const { first_name } = query
+    if (first_name) {
+      options.where.first_name = { [Op.iLike]: `%${first_name}%` }
+    }
+
+    const { last_name } = query
+    if (last_name) {
+      options.where.last_name = { [Op.iLike]: `%${last_name}%` }
+    }
+
+    const { email } = query
+    if (email) {
+      options.where.email = { [Op.iLike]: `%${email}%` }
+    }
+
+    const { username } = query
+    if (username) {
+      options.where.username = { [Op.iLike]: `%${username}%` }
     }
 
     //Necesario para el findAndCountAll de Sequelize
@@ -111,9 +131,9 @@ class UsersService {
           'country_id',
           'code_phone',
           'phone',
-          'interests'
+          'interests',
         ],
-      });
+      })
       await transaction.commit()
       return updatedUser
     } catch (error) {
