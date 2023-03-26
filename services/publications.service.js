@@ -20,7 +20,7 @@ class PublicationsService {
             cast(
               literal(
                 `(SELECT COUNT(*) FROM "votes" 
-						WHERE "votes"."publications_id" = "Publications"."id")`
+						WHERE "votes"."publication_id" = "Publications"."id")`
               ),
               'integer'
             ),
@@ -94,7 +94,7 @@ class PublicationsService {
           },
           {
             model: models.PublicationsImages.scope('view_public'),
-            as: 'images',
+            as: 'publications_images',
           },
         ],
         attributes: {
@@ -103,7 +103,7 @@ class PublicationsService {
               cast(
                 literal(
                   `(SELECT COUNT(*) FROM "votes" 
-                WHERE "votes"."publications_id" = "Publications"."id")`
+                WHERE "votes"."publication_id" = "Publications"."id")`
                 ),
                 'integer'
               ),
