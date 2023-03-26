@@ -95,8 +95,62 @@ const putUser = async (req, res, next) => {
   }
 }
 
+const getUserVotes = async (req, res, next) => {
+  const result = {
+    results: {},
+  }
+  const userId = req.params.id
+  const { votesPerPage, currentPage } = { votesPerPage: 4, currentPage: 1 }
+  const { limit, offset } = getPagination(currentPage, votesPerPage)
+
+  try {
+    await usersService.getAuthUserOr404(userId)
+    const userVotes = await usersService.findUserVotes(userId, limit, offset)
+    result.results.count = userVotes.count
+    result.results.totalPages = Math.ceil(userVotes.count / votesPerPage)
+    result.results.CurrentPage = currentPage
+    result.results.results = userVotes.rows
+    return res.json(result)
+  } catch (error) {
+    next(error)
+  }
+}
+
+const getUserPublications = async (req, res, next) => {
+  const result = {
+    results: {},
+  }
+  const user_id = req.params.id
+
+  const { publicationsPerPage, currentPage } = {
+    publicationsPerPage: 10,
+    currentPage: 1,
+  }
+  const { limit, offset } = getPagination(currentPage, publicationsPerPage)
+  try {
+    await usersService.getAuthUserOr404(user_id)
+    const userPublications = await usersService.findUserPublications({
+      ...req.query,
+      user_id,
+      limit,
+      offset,
+    })
+    result.results.count = userPublications.count
+    result.results.totalPages = Math.ceil(
+      userPublications.count / publicationsPerPage
+    )
+    result.results.CurrentPage = currentPage
+    result.results.results = userPublications.rows
+    return res.json(result)
+  } catch (error) {
+    next(error)
+  }
+}
+
 module.exports = {
   getUsers,
   getUserById,
   putUser,
+  getUserVotes,
+  getUserPublications,
 }
