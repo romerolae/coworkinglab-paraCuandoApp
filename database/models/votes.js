@@ -13,7 +13,7 @@ module.exports = (sequelize, DataTypes) => {
       })
     }
   }
-  PublicationsTags.init(
+  Votes.init(
     {
       user_id: { type: DataTypes.UUID, primaryKey: true },
       publication_id: { type: DataTypes.UUID, primaryKey: true },
