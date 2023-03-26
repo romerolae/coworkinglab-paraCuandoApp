@@ -25,6 +25,9 @@ module.exports = (sequelize, DataTypes) => {
       tableName: 'publications_images',
       underscored: true,
       timestamps: true,
+      scopes: {
+        view_public: { attributes: ['image_url', 'order'] },
+      },
     }
   )
   return PublicationsImages
