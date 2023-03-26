@@ -32,4 +32,16 @@ router
     userControllers.putUser
   )
 
+router.get(
+  '/:id/votes',
+  passport.authenticate('jwt', { session: false }),
+  userControllers.getUserVotes
+)
+
+router.get(
+  '/:id/publications',
+  passport.authenticate('jwt', { session: false }),
+  userControllers.getUserPublications
+)
+
 module.exports = router
