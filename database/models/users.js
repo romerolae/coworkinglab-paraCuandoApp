@@ -17,7 +17,7 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: 'user_id',
       })
       Users.belongsToMany(models.Tags, {
-        through: 'users_tags',
+        through: 'usersTags',
         foreignKey: 'user_id',
       })
     }

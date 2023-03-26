@@ -1,15 +1,6 @@
 const models = require('../database/models')
 const { Op, cast, literal, fn, col } = require('sequelize')
-const {
-  uploadFile,
-  getObjectSignedUrl,
-  deleteFile,
-  getFileStream,
-} = require('../libs/s3')
 const { CustomError } = require('../utils/helpers')
-const ImagesPublicationsService = require('../services/images_publications.service')
-
-const imagesPublicationsService = new ImagesPublicationsService()
 
 class PublicationsService {
   constructor() {}
@@ -194,17 +185,6 @@ class PublicationsService {
       } catch (error) {
         await transaction.rollback()
         throw error
-      }
-      const images = await models.PublicationsImages.findAll(
-        { where: { publication_id: id } },
-        { transaction }
-      )
-      if (images.length > 0) {
-        const imagesPromises = images.map(async (image) => {
-          await deleteFile(image.image_url)
-          await imagesPublicationsService.removeImage(id, image.order)
-        })
-        await Promise.all(imagesPromises)
       }
 
       await publication.destroy({ transaction })
