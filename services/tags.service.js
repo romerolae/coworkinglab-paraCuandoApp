@@ -79,6 +79,13 @@ class TagsService {
 
       if (!tag) throw new CustomError('Not found Tag', 404, 'Not Found')
 
+      if (tag.image_url)
+        throw new CustomError(
+          'Image Tag is on Cloud, must be deleted first',
+          400,
+          'Bad Request'
+        )
+
       await tag.destroy({ transaction })
 
       await transaction.commit()

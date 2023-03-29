@@ -15,7 +15,6 @@ module.exports = (sequelize, DataTypes) => {
       image_url: { type: DataTypes.TEXT, primaryKey: true },
       order: {
         type: DataTypes.INTEGER,
-        autoIncrement: true,
         validate: { min: 1, max: 3 },
       },
     },
