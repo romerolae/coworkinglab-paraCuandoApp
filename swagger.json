@@ -8,6 +8,38 @@
     {
       "name": "auth",
       "description": "Auth endpoints"
+    },
+    {
+			"name": "users",
+			"description": "Handler of users"
+		},
+    {
+      "name": "publications-types",
+      "description": "Publications types"
+    },
+    {
+      "name":"publications",
+      "description": "Handler of publications"
+    },
+    {
+      "name": "tags",
+      "description": "Handler of categories"
+    },
+    {
+      "name": "countries",
+      "description": "Information about countries"
+    },
+    {
+      "name": "states",
+      "description": "Information about states / provinces"
+    },
+    {
+      "name": "cities",
+      "description": "Information about cities"
+    },
+    {
+      "name": "roles",
+      "description": "Information about roles"
     }
   ],
   "paths": {
@@ -87,7 +119,7 @@
         ],
         "responses": {
           "201": {
-            "description": "User registers, automatically creates an asociation of Profiles with public rol",
+            "description": "User registers, automatically creates an association of Profiles with public rol",
             "schema": {
               "type": "object",
               "properties": {
@@ -207,7 +239,7 @@
         ],
         "responses": {
           "200": {
-            "description": "The user with token will get all profiles asociated with their account",
+            "description": "The user with token will get all profiles associated with their account",
             "schema": {
               "type": "object",
               "properties": {
@@ -236,6 +268,928 @@
           }
         }
       }
+    },
+    "/api/v1/users/":{
+			"get": {
+				"tags": ["users"],
+				"summary": "Filter Users",
+				"description": "Only admin users can filter users",
+				"parameters": [
+					{
+						"name": "page",
+						"in": "query",
+            "type": "string",
+            "description": "What view of the pagination will have to show in"
+					},
+					{
+						"name": "size",
+						"in": "query",
+            "type": "string",
+            "description": "The number of registers that will be fetched"
+					},
+          {
+						"name": "first_name",
+						"in": "query",
+						"type": "string",
+						"description": "it can be filtered by this schema field"
+					},
+          {
+						"name": "last_name",
+						"in": "query",
+						"type": "string",
+						"description": "it can be filtered by this schema field"
+					},
+          {
+						"name": "email",
+						"in": "query",
+						"type": "string",
+						"description": "it can be filtered by this schema field"
+					},
+          {
+						"name": "username",
+						"in": "query",
+						"type": "string",
+						"description": "it can be filtered by this schema field"
+					},
+          {
+						"name": "country_id",
+						"in": "query",
+						"type": "string",
+						"description": "it can be filtered by this schema field"
+					},
+          {
+						"name": "code_phone",
+						"in": "query",
+						"type": "string",
+						"description": "it can be filtered by this schema field"
+					},
+          {
+						"name": "phone",
+						"in": "query",
+						"type": "string",
+						"description": "it can be filtered by this schema field"
+					},
+          {
+						"name": "created_at",
+						"in": "query",
+						"type": "string",
+						"description": "it can be filtered by this schema field"
+					},
+          {
+						"name": "email_verified",
+						"in": "query",
+						"type": "string",
+						"description": "it can be filtered by this schema field"
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Paginated View"
+					}
+				}
+			}
+		},
+    "/api/v1/users/{userID}/":{
+      "get": {
+        "tags": ["users"],
+				"summary": "Find an user by ID",
+				"description": "You will see public information about a user If the user looks at their same profile, you will be shown more complete fields Public user fields",
+        "parameters": [
+          {
+            "name": "userID",
+            "in": "path",
+            "type": "string",
+            "format": "uuid",
+            "required": true,
+            "description": "The user ID"
+          }
+        ],
+        "responses": {
+          "200":{
+            "description": "The user with the ID will be shown"
+          }
+        }
+      },
+      "put": {
+				"tags": ["users"],
+				"summary": "Update an user by ID",
+				"description": "You will update an user by ID",
+				"parameters": [
+					{
+						"name": "userID",
+						"in": "path",
+						"type": "string",
+						"format": "uuid",
+						"required": true,
+						"description": "The user ID"
+					},
+          {
+            "name": "first_name",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "first_name": {
+                  "type": "string",
+                  "example": "Manolo"
+                }
+              }
+            }
+          },
+          {
+            "name": "last_name",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "last_name": {
+                  "type": "string",
+                  "example": "Perez"
+                }
+              }
+            }
+          },
+          {
+            "name": "code_phone",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code_phone": {
+                  "type": "string",
+                  "example": "+52"
+                }
+              }
+           }
+          },
+          {
+            "name": "phone",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "phone": {
+                  "type": "string",
+                  "example": "1234567890"
+                }
+              }
+            }
+          },
+          {
+            "name": "interest",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "interest": {
+                  "type": "string",
+                  "example": "music"
+                }
+              }
+            }
+          }
+				],
+				"responses": {
+					"200": {
+						"description": "The user with the ID will be updated"
+					}
+				}
+			}
+    },
+    "/api/v1/users/{userID}/add-image":{
+      "post": {
+        "tags": ["users"],
+        "summary": "Add an image to an user",
+        "description": "You will add an image to an user",
+        "parameters": [
+          {
+            "name": "userID",
+            "in": "path",
+            "type": "string",
+            "format": "uuid",
+            "required": true,
+            "description": "The user ID"
+          },
+          {
+            "name": "image",
+            "in": "formData",
+            "type": "file",
+            "required": true,
+            "description": "The image"
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "The image will be added to the user"
+          }
+        }
+      }
+    },
+    "/users/{userID}/remove-image":{
+      "delete": {
+        "tags": ["users"],
+        "summary": "Remove an image from an user",
+        "description": "You will remove an image from an user",
+        "parameters": [
+          {
+            "name": "userID",
+            "in": "path",
+            "type": "string",
+            "format": "uuid",
+            "required": true,
+            "description": "The user ID"
+          },
+          {
+            "name": "image",
+            "in": "formData",
+            "type": "file",
+            "required": true,
+            "description": "The image"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The image will be removed from the user"
+          }
+        }
+      }
+    },
+    "/api/v1/{usersID}/votes":{
+      "get": {
+        "tags": ["users"],
+        "summary": "Get all votes from an user",
+        "description": "You will get all votes from an user",
+        "parameters": [
+          {
+            "name": "userID",
+            "in": "path",
+            "type": "string",
+            "format": "uuid",
+            "required": true,
+            "description": "The user ID"
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "type": "integer",
+            "description": "The page number"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "type": "integer",
+            "description": "The number of items per page"
+          },
+          {
+            "name":"size",
+            "in":"query",
+            "type":"integer",
+            "description":"The number of items"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Paginated view"
+          }
+        }
+      }
+    },
+    "/api/v1/users/publications/":{
+      "get": {
+        "tags": ["users"],
+        "summary": "Get all publications from an user",
+        "description": "You will get all publications from an user",
+        "parameters": [
+          {
+            "name": "userID",
+            "in": "path",
+            "type": "string",
+            "format": "uuid",
+            "required": true,
+            "description": "The user ID"
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "type": "integer",
+            "description": "The page number"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "type": "integer",
+            "description": "The number of items per page"
+          },
+          {
+            "name":"size",
+            "in":"query",
+            "type":"integer",
+            "description":"The number of items"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Paginated view"
+          }
+        }
+      }
+    },
+    "/api/v1/publications-types/":{
+      "get": {
+        "tags": ["publications-types"],
+        "summary": "Get all publications types",
+        "description": "You will get all publications types",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "type": "integer",
+            "description": "The page number"
+          },
+          {
+            "name":"size",
+            "in":"query",
+            "type":"integer",
+            "description":"The number of items"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Paginated view"
+          }
+        }
+      }
+    },
+    "/api/v1/publications-types/{publicationsTypeID}/":{
+      "get": {
+        "tags": ["publications-types"],
+        "summary": "Get a publication type",
+        "description": "You will get a publication type",
+        "parameters": [
+          {
+            "name": "publicationsTypeID",
+            "in": "path",
+            "type": "string",
+            "format": "uuid",
+            "required": true,
+            "description": "The publication type ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The publication type"
+          }
+        }
+      }
+    },
+    "/api/v1/publications-types/{publicationType}/":{
+      "put":{
+        "tags": ["publications-types"],
+        "summary": "Update a publication type",
+        "description": "You will update a publication type",
+        "parameters": [
+          {
+            "name": "publicationType",
+            "in": "path",
+            "type": "string",
+            "format": "integer",
+            "required": true,
+            "description": "The publication type ID"
+          },
+          {
+            "name": "name",
+            "in": "formData",
+            "type": "string",
+            "required": true,
+            "description": "The publication type name"
+          },
+          {
+            "name": "description",
+            "in": "formData",
+            "type": "string",
+            "required": true,
+            "description": "The publication type description"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The publication type will be updated"
+          }
+        }
+      }
+    },
+    "/api/v1/publications/":{
+      "get": {
+        "tags": ["publications"],
+        "summary": "Get all publications",
+        "description": "You will get all publications",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "type": "integer",
+            "description": "The page number"
+          },
+          {
+            "name": "size",
+            "in": "query",
+            "type": "integer",
+            "description": "The number of registers to fetch"
+          },
+          {
+            "name":"title",
+            "in":"query",
+            "type":"string",
+            "description":"It can be filtered through this schema field"
+          },
+          {
+            "name":"description",
+            "in":"query",
+            "type":"string",
+            "description":"It can be filtered through this schema field"
+          },
+          {
+            "name":"content",
+            "in":"query",
+            "type":"string",
+            "description":"It can be filtered through this schema field"
+          },
+          {
+            "name":"reference_link",
+            "in":"query",
+            "type":"string",
+            "description":"It can be filtered through this schema field"
+          },
+          {
+            "name": "created_at",
+            "in": "query",
+            "type": "string",
+            "description": "It can be filtered through this schema field"
+          },
+          {
+            "name": "tags",
+            "in": "query",
+            "type": "string",
+            "format": "1,5,6",
+            "description": "You can filter by this schema relation. The ids of the tags separated by commas"
+          },
+          {
+            "name": "publications_type_ids",
+            "in": "query",
+            "type": "string",
+            "description": "It can be filtered through this schema field"
+          },
+          {
+            "name": "votes_count",
+            "in": "query",
+            "type": "string",
+            "format":"operator, valor",
+            "description": "It can be filtered by this schema calculation. | operator = (gte, lte, lt, gt, eq) and value which is an integer separated by a comma"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Paginated view"
+          }
+        }
+      },
+      "post": {
+        "tags": ["publications"],
+        "summary": "Create a publication",
+        "description": "You will create a publication",
+        "parameters": [
+          {
+            "name": "title",
+            "in": "formData",
+            "type": "string",
+            "required": true,
+            "description": "The publication title"
+          },
+          {
+            "name": "description",
+            "in": "formData",
+            "type": "string",
+            "required": true,
+            "description": "The publication description"
+          },
+          {
+            "name": "content",
+            "in": "formData",
+            "type": "string",
+            "required": true,
+            "description": "The publication content"
+          },
+          {
+            "name": "reference_link",
+            "in": "formData",
+            "type": "string",
+            "required": true,
+            "description": "The publication reference link"
+          },
+          {
+            "name": "tags",
+            "in": "formData",
+            "type": "string",
+            "required": true,
+            "description": "The publication tags"
+          },
+          {
+            "name": "publications_type_ids",
+            "in": "formData",
+            "type": "string",
+            "required": true,
+            "description": "The publication type id"
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "The publication will be created"
+          }
+        }
+      }
+    },
+    "/api/v1/publications/{publicationID}/":{
+      "get": {
+        "tags": ["publications"],
+        "summary": "Get a publication",
+        "description": "You will get a publication",
+        "parameters": [
+          {
+            "name": "publicationID",
+            "in": "path",
+            "type": "string",
+            "format": "integer",
+            "required": true,
+            "description": "The publication ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The publication"
+          }
+        }
+      },
+      "delete": {
+        "tags": ["publications"],
+        "summary": "Delete a publication",
+        "description": "You will delete a publication",
+        "parameters": [
+          {
+            "name": "publicationID",
+            "in": "path",
+            "type": "string",
+            "format": "integer",
+            "required": true,
+            "description": "The publication ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The publication will be deleted"
+          }
+        }
+      }
+    },
+    "/api/v1/publications/{publicationID}/vote":{
+      "post": {
+        "tags": ["publications"],
+        "summary": "Vote a publication",
+        "description": "You will vote a publication",
+        "parameters": [
+          {
+            "name": "publicationID",
+            "in": "path",
+            "type": "string",
+            "format": "integer",
+            "required": true,
+            "description": "The publication ID"
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "The publication will be voted"
+          }
+        }
+      }
+    },
+    "/api/v1/publications/{publicationID}/add-image":{
+      "post": {
+        "tags": ["publications"],
+        "summary": "Add an image to a publication",
+        "description": "You will add an image to a publication",
+        "parameters": [
+          {
+            "name": "publicationID",
+            "in": "path",
+            "type": "string",
+            "format": "integer",
+            "required": true,
+            "description": "The publication ID"
+          },
+          {
+            "name": "image",
+            "in": "formData",
+            "type": "file",
+            "required": true,
+            "description": "The image"
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "The image will be added to the publication"
+          }
+        }
+      }
+    },
+    "/api/v1/publications/{publicationID}/remove-image/{order}":{
+      "delete": {
+        "tags": ["publications"],
+        "summary": "Remove an image from a publication",
+        "description": "You will remove an image from a publication",
+        "parameters": [
+          {
+            "name": "publicationID",
+            "in": "path",
+            "type": "string",
+            "format": "integer",
+            "required": true,
+            "description": "The publication ID"
+          },
+          {
+            "name": "order",
+            "in": "path",
+            "type": "string",
+            "format": "integer",
+            "required": true,
+            "description": "The image order"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The image will be removed from the publication"
+          }
+        }
+      }
+    },
+    "/api/v1/tags/":{
+      "get": {
+        "tags": ["tags"],
+        "summary": "Get all tags",
+        "description": "You will get all tags",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "type": "string",
+            "format": "integer",
+            "description": "It can be filtered through this schema field"
+          },
+          {
+            "name": "size",
+            "in": "query",
+            "type": "string",
+            "format": "integer",
+            "description": "It can be filtered through this schema field"
+          },
+          {
+            "name": "title",
+            "in": "query",
+            "type": "string",
+            "description": "It can be filtered through this schema field"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Paginated view"
+          }
+        }
+      },
+      "post": {
+        "tags": ["tags"],
+        "summary": "Create a tag",
+        "description": "You will create a tag",
+        "parameters": [
+          {
+            "name": "name",
+            "in": "formData",
+            "type": "string",
+            "required": true,
+            "description": "The tag name"
+          },
+          {
+            "name": "description",
+            "in": "formData",
+            "type": "string",
+            "required": true,
+            "description": "The tag description"
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "The tag will be created"
+          }
+        }
+      }
+    },
+    "/api/v1/tags/{tagID}/":{
+      "get": {
+        "tags": ["tags"],
+        "summary": "Get a tag",
+        "description": "You will get a tag",
+        "parameters": [
+          {
+            "name": "tagID",
+            "in": "path",
+            "type": "string",
+            "format": "integer",
+            "required": true,
+            "description": "The tag ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The tag"
+          }
+        }
+      },
+      "delete": {
+        "tags": ["tags"],
+        "summary": "Delete a tag",
+        "description": "You will delete a tag and  all its associations",
+        "parameters": [
+          {
+            "name": "tagID",
+            "in": "path",
+            "type": "string",
+            "format": "integer",
+            "required": true,
+            "description": "The tag ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The tag will be deleted"
+          }
+        }
+      },
+      "put": {
+        "tags": ["tags"],
+        "summary": "Update a tag",
+        "description": "You will update a tag",
+        "parameters": [
+          {
+            "name": "tagID",
+            "in": "path",
+            "type": "string",
+            "format": "integer",
+            "required": true,
+            "description": "The tag ID"
+          },
+          {
+            "name": "name",
+            "in": "formData",
+            "type": "string",
+            "required": true,
+            "description": "The tag name"
+          },
+          {
+            "name": "description",
+            "in": "formData",
+            "type": "string",
+            "required": true,
+            "description": "The tag description"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The tag will be updated"
+          }
+        }
+      }
+    },
+    "/api/v1/countries/":{
+      "get": {
+        "tags": ["countries"],
+        "summary": "Get all countries",
+        "description": "You will get all countries",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "type": "string",
+            "format": "integer",
+            "description": "In what view of a page it is necessary to show"
+          },
+          {
+            "name": "size",
+            "in": "query",
+            "type": "string",
+            "format": "integer",
+            "description": "The number of records to return"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Paginated view"
+          }
+        }
+      }
+    },
+    "/api/v1/states/":{
+      "get": {
+        "tags": ["states"],
+        "summary": "Get all states",
+        "description": "You will get all states",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "type": "string",
+            "format": "integer",
+            "description": "In what view of a page it is necessary to show"
+          },
+          {
+            "name": "size",
+            "in": "query",
+            "type": "string",
+            "format": "integer",
+            "description": "The number of records to return"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Paginated view"
+          }
+        }
+      }
+    },
+    "/api/v1/cities/":{
+      "get": {
+        "tags": ["cities"],
+        "summary": "Get all cities",
+        "description": "You will get all cities",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "type": "string",
+            "format": "integer",
+            "description": "In what view of a page it is necessary to show"
+          },
+          {
+            "name": "size",
+            "in": "query",
+            "type": "string",
+            "format": "integer",
+            "description": "The number of records to return"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Paginated view"
+          }
+        }
+      }
+    },
+    "/api/v1/roles/":{
+      "get": {
+        "tags": ["roles"],
+        "summary": "Get all roles",
+        "description": "You will get all roles",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "type": "string",
+            "description": "In what view of a page it is necessary to show"
+          },
+          {
+            "name": "size",
+            "in": "query",
+            "type": "string",
+            "description": "The number of records to return"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Paginated view"
+          }
+        }
+      }
     }
   }
 }
+
+
+
+
+
+
+
+
+
