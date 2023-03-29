@@ -1,7 +1,9 @@
 const AuthService = require('../services/auth.service')
 const { CustomError } = require('../utils/helpers')
+const PublicationsService = require('../services/publications.service')
 
 const authService = new AuthService()
+const publicationsService = new PublicationsService()
 
 const checkRole = async (req, res, next) => {
   const id = req.user.id
@@ -33,8 +35,27 @@ const checkSameUser = async (req, res, next) => {
   }
 }
 
+const checkPublicationOwner = async (req, res, next) => {
+  const publicationID = req.params.id
+  const userId = req.user.id
+
+  try {
+    const { user } = await publicationsService.findById(publicationID)
+    if (user.id === userId) {
+      req.publicationOwner = true
+      next()
+    } else {
+      req.publicationOwner = false
+      next()
+    }
+  } catch (error) {
+    next(error)
+  }
+}
+
 module.exports = {
   checkRole,
   checkAdmin,
   checkSameUser,
+  checkPublicationOwner,
 }

@@ -26,11 +26,6 @@ module.exports = {
           order: {
             type: Sequelize.INTEGER,
             allowNull: false,
-            autoIncrement: true,
-            validate: {
-              min: 1,
-              max: 3,
-            },
           },
           created_at: {
             allowNull: false,

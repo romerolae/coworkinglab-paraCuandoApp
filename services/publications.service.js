@@ -166,8 +166,19 @@ class PublicationsService {
     const transaction = await models.sequelize.transaction()
     try {
       const publication = await models.Publications.findByPk(id)
+      const publicationImage = await models.PublicationsImages.findOne({
+        where: {
+          publication_id: id,
+        },
+      })
       if (!publication)
         throw new CustomError('Not found publication', 404, 'Not Found')
+      if (publicationImage.image_url)
+        throw new CustomError(
+          'Publication Image is on Cloud, must be deleted first',
+          400,
+          'Bad Request'
+        )
       try {
         await models.PublicationsTags.destroy(
           { where: { publication_id: id } },
