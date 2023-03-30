@@ -173,7 +173,7 @@ const uploadImagePublication = async (request, response, next) => {
       })
     )
 
-    return response.status(200).json({
+    return response.status(201).json({
       results: {
         message: `Count of uploaded images: ${imagesKeys.length} `,
         imagesUploaded: imagesKeys,
