@@ -6,6 +6,7 @@ const {
   checkAdmin,
   checkSameUser,
 } = require('../middlewares/userChecker.middleware')
+const { multerUsersPhotos } = require('../middlewares/multer.middleware')
 
 const userControllers = require('../controllers/users.controller')
 
@@ -42,6 +43,22 @@ router.get(
   '/:id/publications',
   passport.authenticate('jwt', { session: false }),
   userControllers.getUserPublications
+)
+
+router.post(
+  '/:id/add-image',
+  passport.authenticate('jwt', { session: false }),
+  checkSameUser,
+  multerUsersPhotos.single('image'),
+  userControllers.postUserImage
+)
+
+router.delete(
+  '/:id/remove-image',
+  passport.authenticate('jwt', { session: false }),
+  checkSameUser,
+  checkRole,
+  userControllers.deleteUserImage
 )
 
 module.exports = router
