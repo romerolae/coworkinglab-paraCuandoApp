@@ -6,7 +6,7 @@ module.exports = {
     const transaction = await queryInterface.sequelize.transaction()
     try {
       await queryInterface.createTable(
-        'publications_types',
+        'publication_types',
         {
           id: {
             allowNull: false,

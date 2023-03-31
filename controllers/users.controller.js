@@ -32,10 +32,10 @@ const getUserById = async (req, res, next) => {
     const sameOrAdmin = 1
     if (isSameUser || userRole === 2) {
       let user = await usersService.getUser(id, sameOrAdmin)
-      return res.json({ results: user })
+      return res.status(200).json({ results: user })
     } else {
       let user = await usersService.getUser(id)
-      return res.json({ results: user })
+      return res.status(200).json({ results: user })
     }
   } catch (error) {
     next(error)

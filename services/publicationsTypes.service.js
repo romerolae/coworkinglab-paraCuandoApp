@@ -38,14 +38,14 @@ class PublicationsTypesService {
 
     options.distinct = true
 
-    const publicationsTypes = await models.PublicationsTypes.findAndCountAll(
+    const publicationsTypes = await models.PublicationTypes.findAndCountAll(
       options
     )
     return publicationsTypes
   }
 
   async getPublicationTypeById(id) {
-    const result = await models.PublicationsTypes.findOne({ where: { id } })
+    const result = await models.PublicationTypes.findOne({ where: { id } })
     if (!result)
       throw new CustomError('Not found Publication type', 404, 'Not Found')
     return result
@@ -54,7 +54,7 @@ class PublicationsTypesService {
   async updatePublicationTypeById(id, obj) {
     const transaction = await models.sequelize.transaction()
     try {
-      await models.PublicationsTypes.update(
+      await models.PublicationTypes.update(
         obj,
         { where: { id } },
         { transaction, fields: ['name', 'description'] }
