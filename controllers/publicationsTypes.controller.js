@@ -25,7 +25,7 @@ const getPublicationsTypes = async (req, res, next) => {
     )
     result.results.currentPage = currentPage
     result.results.results = publicationsTypes.rows
-    return res.json(result)
+    return res.status(200).json(result)
   } catch (error) {
     next(error)
   }

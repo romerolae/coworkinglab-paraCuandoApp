@@ -51,7 +51,9 @@ class UsersService {
     //Necesario para el findAndCountAll de Sequelize
     options.distinct = true
 
-    const users = await models.Users.findAndCountAll(options)
+    const users = await models.Users.scope('view_same_user').findAndCountAll(
+      options
+    )
     return users
   }
 
@@ -100,7 +102,11 @@ class UsersService {
     let user
     if (sameOrAdmin) {
       user = await models.Users.findByPk(id, {
-        attributes: { exclude: ['id', 'password', 'token'] },
+        attributes: { exclude: ['profiles', 'password', 'token'] },
+        include: {
+          model: models.Tags.scope('view_public'),
+          as: 'interests',
+        },
       })
     } else {
       user = await models.Users.findByPk(id, {

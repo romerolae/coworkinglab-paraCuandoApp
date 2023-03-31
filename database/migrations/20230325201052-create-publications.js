@@ -30,7 +30,7 @@ module.exports = {
             allowNull: false,
             foreignKey: true,
             references: {
-              model: 'publications_types',
+              model: 'publication_types',
               key: 'id',
             },
             onUpdate: 'CASCADE',
