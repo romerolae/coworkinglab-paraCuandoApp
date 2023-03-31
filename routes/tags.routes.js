@@ -40,4 +40,21 @@ router
     tagsControllers.deleteTagById
   )
 
+router
+  .route('/:id/add-image')
+  .post(
+    passport.authenticate('jwt', { session: false }),
+    checkRole,
+    checkAdmin,
+    tagsControllers.postTagsImage
+  )
+
+router
+  .route('/:id/remove-image')
+  .delete(
+    passport.authenticate('jwt', { session: false }),
+    checkRole,
+    checkAdmin,
+    tagsControllers.deleteTagsImage
+  )
 module.exports = router
