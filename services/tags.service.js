@@ -54,6 +54,12 @@ class TagsService {
     return tag
   }
 
+  async getTag(id){
+    let tag = await models.Tags.findByPk(id)
+    if (!tag) throw new CustomError('Not found Tag', 404, 'Not Found')
+    return tag
+  }
+
   async updateTagById(id, obj) {
     const transaction = await models.sequelize.transaction()
     try {
