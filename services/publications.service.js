@@ -94,8 +94,9 @@ class PublicationsService {
           as: 'user',
         },
         {
-          model: models.Cities.scope,
-          as: 'city',
+          model: models.Tags,
+          as: 'tags',
+          through: { attributes: [] },
         },
         {
           model: models.PublicationTypes,
@@ -124,7 +125,7 @@ class PublicationsService {
     if (!result)
       throw new CustomError(
         'Not found Publication',
-        400,
+        404,
         'Publication not registered'
       )
     return result
@@ -180,9 +181,9 @@ class PublicationsService {
           publication_id: id,
         },
       })
-      if (!publication)
-        throw new CustomError('Not found publication', 404, 'Not Found')
-      if (publicationImage.image_url)
+      // if (!publication)
+      //   throw new CustomError('Not found publication', 404, 'Not Found')
+      if (publicationImage)
         throw new CustomError(
           'Publication Image is on Cloud, must be deleted first',
           400,
@@ -228,7 +229,8 @@ class PublicationsService {
         )
         await transaction.commit()
 
-        return deleteVote
+        return -1
+        // return deleteVote
       } else {
         const newVote = await models.Votes.create(
           { user_id: userId, publication_id: publicationId },
@@ -236,7 +238,8 @@ class PublicationsService {
         )
         await transaction.commit()
 
-        return newVote
+        return 1
+        // return newVote
       }
     } catch (error) {
       await transaction.rollback()

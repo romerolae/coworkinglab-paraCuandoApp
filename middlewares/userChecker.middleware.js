@@ -40,8 +40,8 @@ const checkPublicationOwner = async (req, res, next) => {
   const userId = req.user.id
 
   try {
-    const { user } = await publicationsService.findById(publicationID)
-    if (user.id === userId) {
+    const results = await publicationsService.findById(publicationID)
+    if (results.user_id === userId) {
       req.publicationOwner = true
       next()
     } else {

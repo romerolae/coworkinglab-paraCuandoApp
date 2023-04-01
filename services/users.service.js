@@ -1,8 +1,11 @@
 const { v4: uuid4 } = require('uuid')
 const models = require('../database/models')
-const { Op } = require('sequelize')
+const { Op, cast, literal } = require('sequelize')
 const { CustomError } = require('../utils/helpers')
 const { hashPassword } = require('../libs/bcrypt')
+const PublicationsService = require('../services/publications.service')
+
+const publicationsService = new PublicationsService()
 
 class UsersService {
   constructor() {}
@@ -274,63 +277,79 @@ class UsersService {
         user_id: userId,
       },
     })
-    return userVotes
+    const publicationsVoted = await publicationsService.findAndCount({
+      id: userVotes.publication_id,
+    })
+    return publicationsVoted
   }
 
-  async findUserPublications(query) {
-    let options = {
-      where: {},
-      include: [
-        {
-          model: models.PublicationsImages.scope('view_public'),
-          as: 'publications_images',
-        },
-      ],
-    }
+  //   async findUserPublications(query) {
+  //     let options = {
+  //       where: {},
+  //       include: [
+  //         {
+  //           model: models.PublicationsImages.scope('view_public'),
+  //           as: 'images',
+  //         },
+  //         {
+  //           model: models.Tags,
+  //           as: 'tags',
+  //           through: { attributes: [] },
+  //         },
+  //         {
+  //           model: models.PublicationTypes,
+  //           as: 'publication_type',
+  //         },
+  //         {
+  //           model: models.Users.scope('view_public'),
+  //           as: 'user',
+  //         },
+  //       ],
+  //     }
 
-    const { limit, offset } = query
-    if (limit && offset) {
-      options.limit = limit
-      options.offset = offset
-    }
+  //     const { limit, offset } = query
+  //     if (limit && offset) {
+  //       options.limit = limit
+  //       options.offset = offset
+  //     }
 
-    const { user_id } = query
-    if (user_id) {
-      options.where.user_id = user_id
-    }
+  //     const { user_id } = query
+  //     if (user_id) {
+  //       options.where.user_id = user_id
+  //     }
 
-    const { title } = query
-    if (title) {
-      options.where.title = { [Op.iLike]: `%${title}%` }
-    }
+  //     const { title } = query
+  //     if (title) {
+  //       options.where.title = { [Op.iLike]: `%${title}%` }
+  //     }
 
-    const { description } = query
-    if (description) {
-      options.where.description = { [Op.iLike]: `%${description}%` }
-    }
+  //     const { description } = query
+  //     if (description) {
+  //       options.where.description = { [Op.iLike]: `%${description}%` }
+  //     }
 
-    const { content } = query
-    if (content) {
-      options.where.content = { [Op.iLike]: `%${content}%` }
-    }
+  //     const { content } = query
+  //     if (content) {
+  //       options.where.content = { [Op.iLike]: `%${content}%` }
+  //     }
 
-    const { city_id } = query
-    if (city_id) {
-      options.where.city_id = { [Op.iLike]: `%${city_id}%` }
-    }
+  //     const { city_id } = query
+  //     if (city_id) {
+  //       options.where.city_id = { [Op.iLike]: `%${city_id}%` }
+  //     }
 
-    const { publication_type_id } = query
-    if (publication_type_id) {
-      options.where.publication_type_id = {
-        [Op.iLike]: `%${publication_type_id}%`,
-      }
-    }
+  //     const { publication_type_id } = query
+  //     if (publication_type_id) {
+  //       options.where.publication_type_id = {
+  //         [Op.iLike]: `%${publication_type_id}%`,
+  //       }
+  //     }
 
-    //Necesario para el findAndCountAll de Sequelize
-    options.distinct = true
-    const userPublications = await models.Publications.findAndCountAll(options)
-    return userPublications
-  }
+  //     //Necesario para el findAndCountAll de Sequelize
+  //     options.distinct = true
+  //     const userPublications = await models.Publications.findAndCountAll(options)
+  //     return userPublications
+  //   }
 }
 
 module.exports = UsersService

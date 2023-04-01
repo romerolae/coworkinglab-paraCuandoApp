@@ -5,6 +5,9 @@ const {
   CustomError,
 } = require('../utils/helpers')
 const { uploadFile, deleteFile } = require('../libs/awsS3')
+const PublicationsService = require('../services/publications.service')
+
+const publicationsService = new PublicationsService()
 
 const usersService = new UsersService()
 
@@ -114,43 +117,65 @@ const getUserVotes = async (req, res, next) => {
     const userVotes = await usersService.findUserVotes(userId, limit, offset)
     result.results.count = userVotes.count
     result.results.totalPages = Math.ceil(userVotes.count / votesPerPage)
-    result.results.CurrentPage = currentPage
+    result.results.currentPage = currentPage
     result.results.results = userVotes.rows
-    return res.json(result)
+    return res.status(200).json(result)
   } catch (error) {
     next(error)
   }
 }
 
 const getUserPublications = async (req, res, next) => {
-  const result = {
-    results: {},
-  }
-  const user_id = req.params.id
-
-  const { publicationsPerPage, currentPage } = {
-    publicationsPerPage: 10,
-    currentPage: 1,
-  }
-  const { limit, offset } = getPagination(currentPage, publicationsPerPage)
   try {
-    await usersService.getAuthUserOr404(user_id)
-    const userPublications = await usersService.findUserPublications({
-      ...req.query,
+    let query = req.query
+    let { page, size } = query
+    const user_id = req.params.id
+
+    const { limit, offset } = getPagination(page, size, '10')
+    query.limit = limit
+    query.offset = offset
+
+    // await usersService.getAuthUserOr404(user_id)
+    // const userPublications = await usersService.findUserPublications({
+    //   user_id,
+    // })
+    const userPublications = await publicationsService.findAndCount({
       user_id,
-      limit,
-      offset,
     })
-    result.results.count = userPublications.count
-    result.results.totalPages = Math.ceil(
-      userPublications.count / publicationsPerPage
-    )
-    result.results.CurrentPage = currentPage
-    result.results.results = userPublications.rows
-    return res.json(result)
+    const results = getPagingData(userPublications, page, limit)
+    return res.status(200).json({ results: results })
   } catch (error) {
     next(error)
   }
+
+  // const result = {
+  //   results: {},
+  // }
+  // const user_id = req.params.id
+
+  // const { publicationsPerPage, currentPage } = {
+  //   publicationsPerPage: 10,
+  //   currentPage: 1,
+  // }
+  // const { limit, offset } = getPagination(currentPage, publicationsPerPage)
+  // try {
+  //   await usersService.getAuthUserOr404(user_id)
+  //   const userPublications = await usersService.findUserPublications({
+  //     ...req.query,
+  //     user_id,
+  //     limit,
+  //     offset,
+  //   })
+  //   result.results.count = userPublications.count
+  //   result.results.totalPages = Math.ceil(
+  //     userPublications.count / publicationsPerPage
+  //   )
+  //   result.results.CurrentPage = currentPage
+  //   result.results.results = userPublications.rows
+  //   return res.status(200).json(result)
+  // } catch (error) {
+  //   next(error)
+  // }
 }
 
 const postUserImage = async (request, response, next) => {
