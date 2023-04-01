@@ -164,6 +164,11 @@ class PublicationsService {
         }
       }
 
+      await models.Votes.create(
+        { user_id: data.user_id, publication_id: data.id },
+        { transaction }
+      )
+
       await transaction.commit()
       return newPublication
     } catch (error) {
