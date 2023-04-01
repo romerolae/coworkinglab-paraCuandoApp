@@ -30,15 +30,14 @@ router.get('/:id', getPublicationById)
 router.delete(
   '/:id',
   passport.authenticate('jwt', { session: false }),
-  checkSameUser,
   checkRole,
+  checkPublicationOwner,
   deletePublication
 )
 
 router.post(
   '/:id/vote',
   passport.authenticate('jwt', { session: false }),
-  checkSameUser,
   addVote
 )
 

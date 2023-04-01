@@ -89,21 +89,26 @@ const getPublicationById = async (req, res, next) => {
   const publicationId = req.params.id
   try {
     const publication = await publicationsService.findById(publicationId)
-    return res.status(200).json(publication)
+    return res.status(200).json({ results: publication })
   } catch (error) {
     next(error)
   }
 }
 
 const deletePublication = async (req, res, next) => {
-  const isSameUser = req.isSameUser
+  const publicationOwner = req.publicationOwner
   const role = req.userRole
   const id = req.params.id
 
+  const publication = await publicationsService.findById(id)
+  if (!publication) {
+    return res.status(404).json({ message: 'Publication not found' })
+  }
+
   try {
-    if (isSameUser || role === 2) {
+    if (publicationOwner || role === 2) {
       await publicationsService.delete(id)
-      return res.json({ message: 'Publication removed' })
+      return res.status(200).json({ message: 'Publication removed' })
     } else {
       throw new CustomError('Not authorized user', 403, 'Forbbiden')
     }
@@ -113,16 +118,17 @@ const deletePublication = async (req, res, next) => {
 }
 
 const addVote = async (req, res, next) => {
-  const isSameUser = req.isSameUser
   const publicationId = req.params.id
   const userId = req.user.id
 
   try {
-    if (!isSameUser) {
-      await publicationsService.addAndDelete(publicationId, userId)
-      return res.json({ message: 'Add-delete Vote' })
+    // await publicationsService.addAndDelete(publicationId, userId)
+    // return res.status(201).json({ message: 'Add-delete Vote' })
+    const result = await publicationsService.addAndDelete(publicationId, userId)
+    if (result === 1) {
+      res.status(201).json({ message: 'Vote added' })
     } else {
-      throw new CustomError('Not authorized user', 403, 'Forbbiden')
+      res.status(200).json({ message: 'Vote deleted' })
     }
   } catch (error) {
     next(error)
