@@ -24,7 +24,7 @@ class PublicationsService {
         {
           model: models.Tags,
           as: 'tags',
-          attributes: { exclude: ['publications_tags'] },
+          through: { attributes: [] },
         },
       ],
       attributes: {
