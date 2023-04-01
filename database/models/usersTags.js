@@ -8,7 +8,7 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: 'tag_id',
       })
       UsersTags.belongsTo(models.Users, {
-        as: 'interest',
+        as: 'interests',
         foreignKey: 'user_id',
       })
     }

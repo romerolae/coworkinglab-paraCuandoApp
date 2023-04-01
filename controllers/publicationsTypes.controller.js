@@ -33,10 +33,9 @@ const getPublicationsTypes = async (req, res, next) => {
 
 const getPublicationTypeById = async (req, res, next) => {
   const id = req.params.id
-  const result = { result: {} }
   try {
-    result.result = await publicationsTypesService.getPublicationTypeById(id)
-    return res.json(result)
+    const result = await publicationsTypesService.getPublicationTypeById(id)
+    return res.status(200).json({ results: result })
   } catch (error) {
     next(error)
   }
@@ -47,7 +46,7 @@ const putPublicationTypeById = async (req, res, next) => {
   const obj = req.body
   try {
     await publicationsTypesService.updatePublicationTypeById(id, obj)
-    return res.json({ message: 'Success Update' })
+    return res.status(200).json({ message: 'Success Update' })
   } catch (error) {
     next(error)
   }

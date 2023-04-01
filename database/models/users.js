@@ -17,7 +17,8 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: 'user_id',
       })
       Users.belongsToMany(models.Tags, {
-        through: 'usersTags',
+        through: models.UsersTags,
+        as: 'interests',
         foreignKey: 'user_id',
       })
     }
@@ -83,10 +84,10 @@ module.exports = (sequelize, DataTypes) => {
       scopes: {
         view_public: {
           attributes: [
-            'id',
+            // 'id',
             'first_name',
             'last_name',
-            'country_id',
+            // 'country_id',
             'image_url',
           ],
         },

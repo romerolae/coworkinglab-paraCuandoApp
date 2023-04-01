@@ -21,10 +21,11 @@ module.exports = (sequelize, DataTypes) => {
       })
       Publications.belongsToMany(models.Tags, {
         through: 'publications_tags',
+        as: 'tags',
         foreignKey: 'publication_id',
       })
       Publications.hasMany(models.PublicationsImages, {
-        as: 'publications_images',
+        as: 'images',
         foreignKey: 'publication_id',
       })
     }

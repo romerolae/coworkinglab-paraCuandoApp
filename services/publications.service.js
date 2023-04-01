@@ -13,6 +13,19 @@ class PublicationsService {
           model: models.Users.scope('view_public'),
           as: 'user',
         },
+        {
+          model: models.PublicationTypes,
+          as: 'publication_type',
+        },
+        {
+          model: models.PublicationsImages,
+          as: 'images',
+        },
+        {
+          model: models.Tags,
+          as: 'tags',
+          attributes: { exclude: ['publications_tags'] },
+        },
       ],
       attributes: {
         include: [
@@ -68,51 +81,46 @@ class PublicationsService {
 
     options.distinct = true
 
-    const publications = await models.Publications.scope(
-      'no_timestamps'
-    ).findAndCountAll(options)
+    const publications = await models.Publications.findAndCountAll(options)
 
     return publications
   }
 
   async findById(id) {
-    const result = await models.Publications.scope('no_timestamps').findByPk(
-      id,
-      {
-        include: [
-          {
-            model: models.Users.scope('view_public'),
-            as: 'user',
-          },
-          {
-            model: models.Cities.scope('no_timestamps'),
-            as: 'city',
-          },
-          {
-            model: models.PublicationsTypes.scope('no_timestamps'),
-            as: 'publication_type',
-          },
-          {
-            model: models.PublicationsImages.scope('view_public'),
-            as: 'publications_images',
-          },
-        ],
-        attributes: {
-          include: [
-            [
-              cast(
-                literal(
-                  `(SELECT COUNT(*) FROM "votes" 
-                WHERE "votes"."publication_id" = "Publications"."id")`
-                ),
-                'integer'
-              ),
-              'votes_count',
-            ],
-          ],
+    const result = await models.Publications.findByPk(id, {
+      include: [
+        {
+          model: models.Users.scope('view_public'),
+          as: 'user',
         },
-      }
-    )
+        {
+          model: models.Cities.scope,
+          as: 'city',
+        },
+        {
+          model: models.PublicationTypes,
+          as: 'publication_type',
+        },
+        {
+          model: models.PublicationsImages,
+          as: 'images',
+        },
+      ],
+      attributes: {
+        include: [
+          [
+            cast(
+              literal(
+                `(SELECT COUNT(*) FROM "votes" 
+                WHERE "votes"."publication_id" = "Publications"."id")`
+              ),
+              'integer'
+            ),
+            'votes_count',
+          ],
+        ],
+      },
+    })
     if (!result)
       throw new CustomError(
         'Not found Publication',
@@ -140,8 +148,9 @@ class PublicationsService {
       )
 
       if (tag_ids && tag_ids.length > 0) {
+        let arrayTags = tag_ids.split(',')
         let findedTags = await models.Tags.findAll({
-          where: { id: tag_ids },
+          where: { id: arrayTags },
           attributes: ['id'],
           raw: true,
         })

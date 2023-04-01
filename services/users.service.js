@@ -102,15 +102,30 @@ class UsersService {
     let user
     if (sameOrAdmin) {
       user = await models.Users.findByPk(id, {
-        attributes: { exclude: ['profiles', 'password', 'token'] },
+        attributes: [
+          'id',
+          'first_name',
+          'last_name',
+          'email',
+          'email_verified',
+          'code_phone',
+          'phone',
+          'image_url',
+        ],
         include: {
           model: models.Tags.scope('view_public'),
           as: 'interests',
+          attributes: { exclude: ['UsersTags'] },
         },
       })
     } else {
       user = await models.Users.findByPk(id, {
-        attributes: ['first_name', 'last_name', 'image_url'],
+        attributes: ['id', 'first_name', 'last_name', 'image_url'],
+        include: {
+          model: models.Tags.scope('view_public'),
+          as: 'interests',
+          attributes: { exclude: ['UsersTags'] },
+        },
       })
     }
     if (!user) throw new CustomError('Not found User', 404, 'Not Found')
@@ -124,12 +139,31 @@ class UsersService {
     return user
   }
 
-  async updateUser(id, obj) {
+  async updateUser(id, obj, interests) {
     const transaction = await models.sequelize.transaction()
     try {
       let user = await models.Users.findByPk(id)
       if (!user) throw new CustomError('Not found user', 404, 'Not Found')
       let updatedUser = await user.update(obj, { transaction })
+
+      if (interests && interests.length > 0) {
+        let arrayInterests = interests.split(',')
+        let findedInterests = await models.Tags.findAll({
+          where: { id: arrayInterests },
+          attributes: ['id'],
+          raw: true,
+        })
+
+        if (findedInterests.length > 0) {
+          let interest = await Promise.all(
+            findedInterests.map((interest) => interest.id)
+          )
+          await updatedUser.setInterests(interest, { transaction })
+        } else {
+          throw new Error('Tag not found')
+        }
+      }
+
       await transaction.commit()
       return updatedUser
     } catch (error) {
