@@ -1,8 +1,10 @@
 const TagsService = require('../services/tags.service')
-const { getPagination, getPagingData, CustomError } = require('../utils/helpers')
-const {uploadFile, deleteFile } = require('../libs/awsS3')
-
-
+const {
+  getPagination,
+  getPagingData,
+  CustomError,
+} = require('../utils/helpers')
+const { uploadFile, deleteFile } = require('../libs/awsS3')
 
 const tagsService = new TagsService()
 
@@ -36,7 +38,7 @@ const getTagById = async (req, res, next) => {
   try {
     const { id } = req.params
     const tag = await tagsService.getTagOr404(id)
-    return res.status(200).json(tag)
+    return res.status(200).json({ results: tag })
   } catch (error) {
     next(error)
   }
@@ -56,20 +58,20 @@ const putTagById = async (req, res, next) => {
 const deleteTagById = async (req, res, next) => {
   const id = req.params.id
   try {
-    await tagsService.removeTag(id)
-    return res.json({ message: 'Tag removed' })
+    let tag = await tagsService.removeTag(id)
+    return res.json({ results: tag, message: 'Tag removed' })
   } catch (error) {
     next(error)
   }
 }
 
-const postTagsImage = async (request, response, next) =>{
+const postTagsImage = async (request, response, next) => {
   const userId = request.params.id
   const file = request.file
   try {
-    if(!request.isSameUser)
+    if (!request.isSameUser)
       throw new CustomError('User not authorized', 403, 'Forbidden')
-    if(file){
+    if (file) {
       await tagsService.getTag(userId)
 
       let fileKey = `public/tags/images/image-${userId}`
@@ -89,7 +91,9 @@ const postTagsImage = async (request, response, next) =>{
 
       let bucketURL = process.env.AWS_DOMAIN + fileKey
 
-      let newTagImage = await tagsService.updateTagById(userId, { image_url: bucketURL})
+      let newTagImage = await tagsService.updateTagById(userId, {
+        image_url: bucketURL,
+      })
 
       //At the end of everything, clean the server from the images
       try {
@@ -102,40 +106,38 @@ const postTagsImage = async (request, response, next) =>{
           message: 'Image Added',
         },
       })
-
-    }else{
+    } else {
       throw new CustomError('Image was not received', 400, 'Bad Request')
     }
   } catch (error) {
-    if(file){
+    if (file) {
       await unlinkFile(file.path)
     }
     return next(error)
   }
 }
 
-
 const deleteTagsImage = async (request, response, next) => {
-  const userId = request.params.id;
+  const userId = request.params.id
 
   try {
     if (!request.isSameUser) {
       if (request.role !== 2)
-        throw new CustomError('Not authorized User', 403, 'Forbidden');
+        throw new CustomError('Not authorized User', 403, 'Forbidden')
     }
-    const { image_url } = await tagsService.getTag(userId);
+    const { image_url } = await tagsService.getTag(userId)
     if (!image_url) {
-      return response.status(404).json({ message: 'Image not found' });
+      return response.status(404).json({ message: 'Image not found' })
     }
-    let awsDomain = process.env.AWS_DOMAIN;
-    const imageKey = image_url.replace(awsDomain, '');
-    await deleteFile(imageKey);
-    await tagsService.updateTagById(userId, { image_url: null });
-    return response.status(200).json({ message: 'Image Removed' });
+    let awsDomain = process.env.AWS_DOMAIN
+    const imageKey = image_url.replace(awsDomain, '')
+    await deleteFile(imageKey)
+    await tagsService.updateTagById(userId, { image_url: null })
+    return response.status(200).json({ message: 'Image Removed' })
   } catch (error) {
-    next(error);
+    next(error)
   }
-};
+}
 
 module.exports = {
   getTags,
@@ -144,5 +146,5 @@ module.exports = {
   putTagById,
   deleteTagById,
   postTagsImage,
-  deleteTagsImage
+  deleteTagsImage,
 }

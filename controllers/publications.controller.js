@@ -1,6 +1,10 @@
 const PublicationsService = require('../services/publications.service')
 const uuid = require('uuid')
-const { getPagination, CustomError } = require('../utils/helpers')
+const {
+  getPagination,
+  getPagingData,
+  CustomError,
+} = require('../utils/helpers')
 const PublicationImagesService = require('../services/publicationImages.service')
 const { uploadFile, deleteFile } = require('../libs/awsS3')
 
@@ -8,31 +12,45 @@ const publicationsService = new PublicationsService()
 const publicationImagesService = new PublicationImagesService()
 
 const getPublications = async (req, res, next) => {
-  const result = {
-    results: {},
-  }
-  const { publicationsPerPage, currentPage } = {
-    publicationsPerPage: 10,
-    currentPage: 1,
-  }
-  const { limit, offset } = getPagination(currentPage, publicationsPerPage)
-
   try {
-    const publications = await publicationsService.findAndCount({
-      ...req.query,
-      limit,
-      offset,
-    })
-    result.results.count = publications.count
-    result.results.totalPages = Math.ceil(
-      publications.count / publicationsPerPage
-    )
-    result.results.CurrentPage = currentPage
-    result.results.results = publications.rows
-    return res.json(result)
+    let query = req.query
+    let { page, size } = query
+
+    const { limit, offset } = getPagination(page, size, '10')
+    query.limit = limit
+    query.offset = offset
+    let publications = await publicationsService.findAndCount(query)
+    const results = getPagingData(publications, page, limit)
+    return res.status(200).json({ results: results })
   } catch (error) {
     next(error)
   }
+
+  // const result = {
+  //   results: {},
+  // }
+  // const { publicationsPerPage, currentPage } = {
+  //   publicationsPerPage: 10,
+  //   currentPage: 1,
+  // }
+  // const { limit, offset } = getPagination(currentPage, publicationsPerPage)
+
+  // try {
+  //   const publications = await publicationsService.findAndCount({
+  //     ...req.query,
+  //     limit,
+  //     offset,
+  //   })
+  //   result.results.count = publications.count
+  //   result.results.totalPages = Math.ceil(
+  //     publications.count / publicationsPerPage
+  //   )
+  //   result.results.CurrentPage = currentPage
+  //   result.results.results = publications.rows
+  //   return res.json(result)
+  // } catch (error) {
+  //   next(error)
+  // }
 }
 
 const postPublication = async (req, res, next) => {
@@ -71,7 +89,7 @@ const getPublicationById = async (req, res, next) => {
   const publicationId = req.params.id
   try {
     const publication = await publicationsService.findById(publicationId)
-    return res.json(publication)
+    return res.status(200).json(publication)
   } catch (error) {
     next(error)
   }

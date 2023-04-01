@@ -46,13 +46,14 @@ const putUser = async (req, res, next) => {
   try {
     const { id } = req.params
     const { body } = req
+    const interests = body.interests
     const isSameUser = req.isSameUser
 
     // Verify if the user trying to edit is the same as the user being edited
     if (!isSameUser) {
-      return res.status(401).json({ error: 'Unauthorized' })
+      return res.status(403).json({ error: 'Unauthorized' })
     } else {
-      let user = await usersService.updateUser(id, body)
+      let user = await usersService.updateUser(id, body, interests)
     }
 
     // Non-editable fields
@@ -94,7 +95,7 @@ const putUser = async (req, res, next) => {
         error: 'You must provide at least one valid field to edit',
       })
     }
-    return res.json({ message: 'Success Update' })
+    return res.status(200).json({ message: 'Success Update' })
   } catch (error) {
     next(error)
   }
