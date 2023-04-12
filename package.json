@@ -1,41 +1,42 @@
 {
-  "name": "academlo-auth-api-starter",
-  "version": "1.0.3",
-  "description": "",
-  "bin": "./bin/cli.js",
-  "main": "index.js",
-  "scripts": {
-    "lint": "eslint .",
-    "dev": "nodemon index.js",
-    "start": "node index.js",
-    "test": "jest --detectOpenHandles",
-    "pretest": "npx sequelize-cli db:drop --env test && npx sequelize-cli db:create --env test && npx sequelize-cli db:migrate --env test && npx sequelize-cli db:seed:all --env test --seeders-path tests/seeders"
-  },
-  "author": "",
-  "license": "ISC",
-  "dependencies": {
-    "@aws-sdk/client-s3": "^3.301.0",
-    "bcrypt": "^5.1.0",
-    "cors": "^2.8.5",
-    "dotenv": "^16.0.3",
-    "express": "^4.18.2",
-    "helmet": "^6.0.1",
-    "joi": "^17.4.2",
-    "multer": "^1.4.5-lts.1",
-    "nodemailer": "^6.9.0",
-    "passport": "^0.6.0",
-    "passport-jwt": "^4.0.1",
-    "pg": "^8.9.0",
-    "pg-hstore": "^2.3.4",
-    "sequelize": "^6.23.2",
-    "sequelize-cli": "^6.5.2",
-    "swagger-ui-express": "^4.6.2",
-    "uuid": "^9.0.0"
-  },
-  "devDependencies": {
-    "eslint": "^8.31.0",
-    "jest": "^29.5.0",
-    "nodemon": "^2.0.20",
-    "supertest": "^6.3.3"
-  }
+	"name": "academlo-auth-api-starter",
+	"version": "1.0.3",
+	"description": "",
+	"bin": "./bin/cli.js",
+	"main": "index.js",
+	"scripts": {
+		"lint": "eslint .",
+		"dev": "nodemon index.js",
+		"start": "node index.js",
+		"test": "jest --detectOpenHandles",
+		"pretest": "npx sequelize-cli db:drop --env test && npx sequelize-cli db:create --env test && npx sequelize-cli db:migrate --env test && npx sequelize-cli db:seed:all --env test --seeders-path tests/seeders"
+	},
+	"author": "",
+	"license": "ISC",
+	"dependencies": {
+		"@aws-sdk/client-s3": "^3.301.0",
+		"bcrypt": "^5.1.0",
+		"cors": "^2.8.5",
+		"dotenv": "^16.0.3",
+		"express": "^4.18.2",
+		"helmet": "^6.0.1",
+		"joi": "^17.4.2",
+		"multer": "^1.4.5-lts.1",
+		"nodemailer": "^6.9.0",
+		"passport": "^0.6.0",
+		"passport-jwt": "^4.0.1",
+		"pg": "^8.9.0",
+		"pg-hstore": "^2.3.4",
+		"sequelize": "^6.23.2",
+		"sequelize-cli": "^6.5.2",
+		"swagger-ui-express": "^4.6.2",
+		"uuid": "^9.0.0",
+		"passport-anonymous": "^1.0.1"
+	},
+	"devDependencies": {
+		"eslint": "^8.31.0",
+		"jest": "^29.5.0",
+		"nodemon": "^2.0.20",
+		"supertest": "^6.3.3"
+	}
 }

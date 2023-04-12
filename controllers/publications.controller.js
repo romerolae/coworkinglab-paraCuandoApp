@@ -13,13 +13,20 @@ const publicationImagesService = new PublicationImagesService()
 
 const getPublications = async (req, res, next) => {
   try {
+    let user = req.user
     let query = req.query
     let { page, size } = query
 
     const { limit, offset } = getPagination(page, size, '10')
     query.limit = limit
     query.offset = offset
-    let publications = await publicationsService.findAndCount(query)
+
+    if(!user){
+      let publications = await publicationsService.findAndCount(query, null)
+      const results = getPagingData(publications, page, limit)
+      return res.json({results: results})
+    }
+    let publications = await publicationsService.findAndCount(query, user.id)
     const results = getPagingData(publications, page, limit)
     return res.status(200).json({ results: results })
   } catch (error) {
@@ -86,9 +93,14 @@ const postPublication = async (req, res, next) => {
 }
 
 const getPublicationById = async (req, res, next) => {
-  const publicationId = req.params.id
   try {
-    const publication = await publicationsService.findById(publicationId)
+    let user = req.user
+    let publicationId = req.params.id
+    if(!user){
+      let publication = await publicationsService.getPublicationOr404(publicationId, null)
+      return res.json({ results: publication })
+    }
+    let publication = await publicationsService.getPublicationOr404(publicationId, user.id)
     return res.status(200).json({ results: publication })
   } catch (error) {
     next(error)

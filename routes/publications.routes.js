@@ -17,7 +17,10 @@ const {
 } = require('../controllers/publications.controller')
 const { multerPublicationsPhotos } = require('../middlewares/multer.middleware')
 
-router.get('/', getPublications)
+router.get(
+  '/',
+  passport.authenticate(['jwt', 'anonymous'], {session: false}),
+  getPublications)
 
 router.post(
   '/',
@@ -25,7 +28,10 @@ router.post(
   postPublication
 )
 
-router.get('/:id', getPublicationById)
+router.get(
+  '/:id',
+  passport.authenticate(['jwt', 'anonymous'], {session: false}),
+  getPublicationById)
 
 router.delete(
   '/:id',
