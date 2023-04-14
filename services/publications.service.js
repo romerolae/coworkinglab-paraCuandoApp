@@ -5,13 +5,14 @@ const { CustomError } = require('../utils/helpers')
 class PublicationsService {
   constructor() {}
 
-  async findAndCount(query) {
+  async findAndCount(query, user_id) {
     const options = {
       where: {},
       include: [
         {
-          model: models.Users.scope('view_public'),
+          model: models.Users,
           as: 'user',
+          attributes: ['first_name', 'last_name', 'image_url'],
         },
         {
           model: models.PublicationTypes,
@@ -49,6 +50,17 @@ class PublicationsService {
       options.offset = offset
     }
 
+    if (user_id) {
+      options.include.push({
+        model: models.Users,
+        as: 'same_vote',
+        through: { attributes: [], where: { user_id } },
+        where: { id: user_id },
+        attributes: ['id', 'first_name', 'last_name'],
+        required: false,
+      })
+    }
+
     const { tag_id } = query
     if (tag_id) {
       const publication_id = await models.PublicationsTags.findAll({
@@ -82,8 +94,60 @@ class PublicationsService {
     options.distinct = true
 
     const publications = await models.Publications.findAndCountAll(options)
-
     return publications
+  }
+
+  async getPublicationOr404(id, user_id) {
+    let options = {
+      attributes: {
+        include: [
+          [
+            cast(
+              literal(
+                `(SELECT COUNT(*) FROM "votes" 
+                WHERE "votes"."publication_id" = "Publications"."id")`
+              ),
+              'integer'
+            ),
+            'votes_count',
+          ],
+        ],
+      },
+      include: [
+        {
+          model: models.Users,
+          as: 'user',
+          attributes: ['first_name', 'last_name', 'image_url'],
+        },
+        {
+          model: models.PublicationTypes,
+          as: 'publication_type',
+        },
+        {
+          model: models.PublicationsImages,
+          as: 'images',
+        },
+        {
+          model: models.Tags,
+          as: 'tags',
+          through: { attributes: [] },
+        },
+      ],
+    }
+    if (user_id) {
+      options.include.push({
+        model: models.Users,
+        as: 'same_vote',
+        through: { attributes: [], where: { user_id } },
+        where: { id: user_id },
+        attributes: ['id', 'first_name', 'last_name'],
+        required: false,
+      })
+    }
+    let publication = await models.Publications.findByPk(id, options)
+    if (!publication)
+      throw new CustomError('Not found Publication', 404, 'Not Found')
+    return publication
   }
 
   async findById(id) {
