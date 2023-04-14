@@ -10,9 +10,9 @@ class PublicationsService {
       where: {},
       include: [
         {
-          model: models.Users.scope,
+          model: models.Users,
           as: 'user',
-          attributes: ['first_name', 'last_name', 'image_url']
+          attributes: ['first_name', 'last_name', 'image_url'],
         },
         {
           model: models.PublicationTypes,
@@ -50,14 +50,14 @@ class PublicationsService {
       options.offset = offset
     }
 
-    if(user_id){
+    if (user_id) {
       options.include.push({
         model: models.Users,
         as: 'same_vote',
-        through: { attributes: [], where:{user_id} },
+        through: { attributes: [], where: { user_id } },
         where: { id: user_id },
         attributes: ['id', 'first_name', 'last_name'],
-        required: false
+        required: false,
       })
     }
 
@@ -97,9 +97,9 @@ class PublicationsService {
     return publications
   }
 
-  async getPublicationOr404(id, user_id){
+  async getPublicationOr404(id, user_id) {
     let options = {
-      attributes:{
+      attributes: {
         include: [
           [
             cast(
@@ -113,11 +113,11 @@ class PublicationsService {
           ],
         ],
       },
-      include:[
+      include: [
         {
           model: models.Users,
           as: 'user',
-          attributes: ['first_name', 'last_name', 'image_url']
+          attributes: ['first_name', 'last_name', 'image_url'],
         },
         {
           model: models.PublicationTypes,
@@ -134,18 +134,19 @@ class PublicationsService {
         },
       ],
     }
-    if(user_id){
+    if (user_id) {
       options.include.push({
         model: models.Users,
         as: 'same_vote',
-        through: { attributes: [], where:{user_id} },
+        through: { attributes: [], where: { user_id } },
         where: { id: user_id },
         attributes: ['id', 'first_name', 'last_name'],
-        required: false
+        required: false,
       })
     }
     let publication = await models.Publications.findByPk(id, options)
-    if(!publication) throw new CustomError('Not found Publication', 404, 'Not Found')
+    if (!publication)
+      throw new CustomError('Not found Publication', 404, 'Not Found')
     return publication
   }
 

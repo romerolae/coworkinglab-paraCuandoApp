@@ -18,7 +18,7 @@ module.exports = (sequelize, DataTypes) => {
       Publications.belongsToMany(models.Users, {
         as: 'same_vote',
         foreignKey: 'publication_id',
-        through: 'votes'
+        through: 'votes',
       })
       Publications.belongsToMany(models.Users, {
         through: 'votes',
